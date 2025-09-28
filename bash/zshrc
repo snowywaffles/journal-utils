@@ -1,0 +1,12 @@
+# so I can edit the daily entry easily
+alias edj='vim "$HOME/Documents/journalEntries/$(date +%Y.%m.%d).txt"'
+
+# cause I'm lazy
+alias cje="cd ~/Documents/journalEntries"
+
+# the power of grep!! 
+search() {
+    grep -rni --color=always "$*" ~/Documents/journalEntries \
+    | sed "s|$HOME/Documents/journalEntries/||" \
+    | less -R
+}
