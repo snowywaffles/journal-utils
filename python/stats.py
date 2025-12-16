@@ -46,6 +46,7 @@ def main():
     if use_log_scale:
         ax.set_yscale("log", base=2)
 
+    ax.grid(True, linewidth=0.5, alpha=0.3)
     ax.set_ylabel("bytes")
     ax.set_title("byte_size vs. time")
     plt.show()
