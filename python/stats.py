@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import re
 from datetime import datetime, date, timedelta
 from collections import Counter
-import re
 
 def get_data():
     num = (date.today() - date(2024, 1, 1)).days + 1
@@ -24,14 +24,8 @@ def get_data():
         "byte_size": byte_sizes,
     })
 
-def tokenize(text):
-    return re.findall(r"[a-z']+", text.lower())
-
-def main():
-    use_log_scale = True
-    print_common_words = True
-    df = get_data()
-
+def plot_avg_sizes(df):
+    df.copy()
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date")
 
@@ -49,6 +43,7 @@ def main():
     # make individual data points less prominent
     ax.lines[0].set_alpha(0.4)
 
+    use_log_scale = True
     if use_log_scale:
         ax.set_yscale("log", base=2)
 
@@ -57,6 +52,10 @@ def main():
     ax.set_title("byte_size vs. time")
     plt.show()
 
+def tokenize(text):
+    return re.findall(r"[a-z']+", text.lower())
+
+def most_common_words(df):
     paths = [
         f"/Users/olympus/Documents/journalEntries/{d.strftime('%Y.%m.%d')}.txt"
         for d in df["date"]
@@ -68,10 +67,14 @@ def main():
         with open(path, "r", encoding="utf-8") as f:
             counter.update(tokenize(f.read()))
 
-    if print_common_words:
-        print("Most common words:")
-        for word, count in counter.most_common(1000):
-            print(f"{word:<15} {count}")
+    print("Most common words:")
+    for word, count in counter.most_common(500):
+        print(f"{word:<15} {count}")
+
+def main():
+    df = get_data()
+    plot_avg_sizes(df)
+    most_common_words(df)
 
 if __name__ == "__main__":
     main()
