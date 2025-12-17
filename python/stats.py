@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime, date, timedelta
+from collections import Counter
+import re
 
 def get_data():
     num = (date.today() - date(2024, 1, 1)).days + 1
@@ -22,8 +24,12 @@ def get_data():
         "byte_size": byte_sizes,
     })
 
+def tokenize(text):
+    return re.findall(r"[a-z']+", text.lower())
+
 def main():
     use_log_scale = True
+    print_common_words = True
     df = get_data()
 
     df["date"] = pd.to_datetime(df["date"])
@@ -50,6 +56,22 @@ def main():
     ax.set_ylabel("bytes")
     ax.set_title("byte_size vs. time")
     plt.show()
+
+    paths = [
+        f"/Users/olympus/Documents/journalEntries/{d.strftime('%Y.%m.%d')}.txt"
+        for d in df["date"]
+    ]
+
+    counter = Counter()
+
+    for path in paths:
+        with open(path, "r", encoding="utf-8") as f:
+            counter.update(tokenize(f.read()))
+
+    if print_common_words:
+        print("Most common words:")
+        for word, count in counter.most_common(1000):
+            print(f"{word:<15} {count}")
 
 if __name__ == "__main__":
     main()
